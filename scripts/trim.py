@@ -69,6 +69,8 @@ def xFade(infilename1, infilename2, length):
 
     UF.wavwrite(x3, fs2,"test3.wav")
 
+
+
 def phaseAdjust():
     pass
 

@@ -154,7 +154,7 @@ def harmonicModel(x, fs, w, N, t, nH, minf0, maxf0, f0et):
 	return y
 
 def harmonicModelAnal(x, fs, w, N, H, t, nH, minf0, maxf0, f0et, harmDevSlope=0.01, minSineDur=.1):
-	o = open("/Users/backup/Desktop/sms output.txt", "w")
+	#o = open("/Users/backup/Desktop/sms output.txt", "w")
 
 	#Analysis of a sound using the sinusoidal harmonic model
 	#x: input sound; fs: sampling rate, w: analysis window; N: FFT size (minimum 512); t: threshold in negative dB,
@@ -179,9 +179,9 @@ def harmonicModelAnal(x, fs, w, N, H, t, nH, minf0, maxf0, f0et, harmDevSlope=0.
 	hfreqp = []                                             # initialize harmonic frequencies of previous frame
 	f0t = 0                                                 # initialize f0 track
 	f0stable = 0                                            # initialize f0 stable
-	print pin, pend
-	print x.size
-	print hM1
+	#print pin, pend
+	#print x.size
+	#print hM1
 	while pin<=pend:
 		x1 = x[pin-hM1:pin+hM2]                               # select frame
 		mX, pX = DFT.dftAnal(x1, w, N)                        # compute dft
@@ -207,7 +207,7 @@ def harmonicModelAnal(x, fs, w, N, H, t, nH, minf0, maxf0, f0et, harmDevSlope=0.
 		pin += H
 		q += 1
 	#print xhfreq
-	o.write(xhfreq)                                              # advance sound pointer
+	#o.write(xhfreq)                                              # advance sound pointer
 	xhfreq = SM.cleaningSineTracks(xhfreq, round(fs*minSineDur/H))     # delete tracks shorter than minSineDur
 	return xhfreq, xhmag, xhphase
 

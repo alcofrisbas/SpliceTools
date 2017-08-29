@@ -41,7 +41,7 @@ def cutPoint(inArray, surveyDepth, threshold, stabilityValue):
 			break
 	return cutPoint
 	
-def makeSound(hfreq, hmag, hphase, xr, Ns, H, fs, cutPoint, padValue):
+def makeSound(hfreq, hmag, hphase, xr, Ns, H, fs, cutPoint, 	):
 	"""
 	constructs a sound
 	"""

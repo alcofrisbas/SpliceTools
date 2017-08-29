@@ -78,7 +78,7 @@ class Splice:
 
 		theCut = max(hfreqAttack, hmagAttack)
 		yAttack = makeSound(self.hfreqA, self.hmagA, self.hphaseA, self.xrA, self.Ns, self.H, self.fsA, theCut, 10+self.xF*0.75)
-		writeSound(yAttack, self.fsA, self.clippedAttack)
+		writeSound(yAttack, self.fsA, self.clippedAttack) 
 
 
 	def attack(self, attackFile):
