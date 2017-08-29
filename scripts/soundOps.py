@@ -40,6 +40,9 @@ def framesPerSecond(fs, spf):
 	spf: samples per frame
 	"""
 	return float(fs)/spf 								#returns frames per second
+def framesPerSecond2(length, numFrames):
+	length = length/1000.0
+	return numFrames/length 
 
 def infoAt(hPhase, f):
 	return hPhase[f, 0]
@@ -64,11 +67,9 @@ def retune(fs, y, stepRatio):
     arr = np.asarray(newsound)
     return np.float32(arr)/norm_fact[arr.dtype.name]
 
-def framesPerSecond2(length, numFrames):
-	length = length/1000.0
-	return numFrames/length 							#returns frames per second using another method
+							#returns frames per second using another method
 
-def fourierResidual(x, fs, window='blackman', M=601, N=1024, t=-100, minSineDur=0.1, nH=20, minf0=220, maxf0=320, f0et=5, harmDevSlope=0.01):
+def fourierResidual(x, fs, window='blackman', M=601, N=1024, t=-100, minSineDur=0.1, nH=20, minf0=200, maxf0=300, f0et=5, harmDevSlope=0.01):
 	Ns = 512											#
 	H = 128												#hop size
 
@@ -109,12 +110,13 @@ def f0phaseShiftAmount(consPhase, vowelPhase, consFS, consFreqF0):
 def crossFadePitch(conshfreq, vowelhfreq, swF, cfL):
 	pass#for 
 
-def adjustMagnitude(conshmag, vowelhmag, stable):
+def adjustMagnitude(conshmag, vowelhmag, stable, vowelPadF):
 	print conshmag.shape
 	for i in range(conshmag.shape[1]):
 
-		ratio = conshmag[stable, i]/vowelhmag[stable, i]
-		print ratio
+		ratio = conshmag[stable, i]/vowelhmag[stable+vowelPadF, i]
+		for j in conshmag[i]:
+			conshmag[j,i] = conshmag[j,i]*ratio
 
 def simpleXFade(consX, vowelX, consFS, swF, cfL, conshfreq):
 	swSample = swF*samplesPerFrame(consX, conshfreq)
@@ -138,15 +140,19 @@ def simpleXFade(consX, vowelX, consFS, swF, cfL, conshfreq):
 			consX[i] = 0
 
 	sf.write("output_sounds/simpleXFadeCons.wav", consX, consFS)
-	x = np.add(consX, vowelX)
+	sf.write("output_sounds/simpleXFadeVowel.wav", vowelX, consFS)
 
+	x = np.add(consX, vowelX)
 	sf.write("output_sounds/simpleXFade.wav", x, consFS, subtype="PCM_24")
 	#sf.write("output_sounds/simpleXFade.wav", )
+def makeSound(hfreq, hmag, hphase, xr, Ns, H, fs):
+	y, yh = HPR.hprModelSynth(hfreq, hmag, hphase, xr, Ns, H, fs)
+	return y, yh
 
 def main():
 	startTime = time.time()
-	consFile = "../sounds/Mod_20.wav"
-	vowelFile = "../sounds/Ah Main_20.wav"
+	consFile = "../Morgan_44.1/Mod/Mod_18.wav"
+	vowelFile = "../Morgan_44.1/Ah Main/Ah Main_20.wav"
 
 	consX, consFS = soundToArray(consFile)
 	#print consX, consFS
@@ -154,14 +160,18 @@ def main():
 	#print vowelX, vowelFS
 	if consFS != vowelFS:
 		raise ValueError("Please use samples with matching Sample Rates")
+	vowelPadMs = 700
 	vowelX, vowelFS = zeroPad(vowelX, vowelFS, 700)		#add .7 seconds to vowel
 
 	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS)
 														#construct harmonic arrays from consonant sound
 	vowelhfreq, vowelhmag, vowelhphase, vowelxr = fourierResidual(vowelX, vowelFS)
 														#construct harmonic arrays from padded vowel sound
+	vowelPadF = (vowelPadMs/1000.0)*framesPerSecond2(soundLength(vowelX, vowelFS), numFrames(vowelhfreq))
+
 	pad = 100
-	print conshfreq, conshmag, conshphase
+	
+	
 	freqStable = stablePoint(conshfreq, 0, 100, 20, pad)		#find the stable point of the frequency
 	magStable =  stablePoint(conshmag, 0, 40, 10, pad)		#find the stable point of the magnitude
 	print freqStable, magStable
@@ -170,7 +180,9 @@ def main():
 	if stable == conshfreq.shape[0]+pad:
 		stable = min(freqStable, magStable)
 	print stable 
-	adjustMagnitude(conshmag, vowelhmag, stable)
+	
+	adjustMagnitude(conshmag, vowelhmag, stable, vowelPadF)
+
 	consFreqF0 = infoAt(conshfreq, stable)				#find the f0 frequency of the consonant at the stable point
 	vowelFreqF0 = infoAt(vowelhfreq, 1.0*framesPerSecond(vowelFS, samplesPerFrame(vowelX, vowelhfreq)))
 	print "consFreq:",consFreqF0
@@ -208,7 +220,7 @@ def main():
 	
 	consFreqF0 = infoAt(conshfreq, 1.0*framesPerSecond(consFS, samplesPerFrame(consX, conshfreq)))
 	sf.write("output_sounds/Cons.wav", consX, consFS)
-	simpleXFade(consX, vowelX, consFS, stable, 1000, conshfreq)
+	simpleXFade(consX, vowelX, consFS, stable, 10000, conshfreq)
 	#print f0phaseShiftAmount(consPhase, vowelPhase, consFS, consFreqF0)
 	print "elapsed time: {}".format(time.time()-startTime)
 if __name__ == '__main__':
