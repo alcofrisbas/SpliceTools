@@ -1,0 +1,37 @@
+
+StartF = Frame number where crossfade starts
+EndF = Frame number where crossfade ends
+CfL = Crossfade length in frames
+SwF = Doesn't matter, except somewhere between StartF and EndF
+
+First deal with Pitch (FreqCons[i,j]):
+
+For each Harmonic j (except not j = 0)
+	PitchDiff = FreqCons[EndF,j] - FreqCons[StartF,j]
+	For i = 1 to (CfL - 1)
+		FreqCons[StartF + i,j] = FreqCons[StartF,j] + PitchDiff * (i / CfL)
+
+
+Now we deal with Phases:
+
+Hop = How many samples for each step in FFT
+HopTime = Hop / SampleRate
+FreqPeriod = 1 / Frequency (time, not samples)
+
+Note that the difference in Phase from start of hop to end of hop will be:
+(2π * HopTime / FreqPeriod) mod 2π
+= (2π * HopTime * Frequency) mod 2π
+
+Preliminary Consonant Phase Corrections:
+For each Harmonic j (except not j = 0)
+	For i = 0 to (CfL - 1)
+		PhaseCons[StartF + i + 1, j] = (PhaseCons[StartF + i,j] + 2π * HopTime * FreqCons[StartF + i,j]) mod 2π
+
+	Now compare PhaseCons[EndF, j] with PhaseVowel[EndF, j]:
+	PhaseCorrectionTotal = (PhaseVowel[EndF, j] - PhaseCons[EndF, j]) mod 2π
+	PhaseCorrectionIncremental = - PhaseCorrectionTotal / CfL
+	For i = 1 to CfL
+		PhaseCons[StartF + i, j] = (PhaseCons[StartF + i, j] + PhaseCorrectionIncremental) mod 2π
+
+Now we can safely crossfade
+
