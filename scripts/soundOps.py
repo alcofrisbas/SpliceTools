@@ -2,10 +2,13 @@ import numpy as np
 import soundfile as sf
 import time
 import math
+import matplotlib.pyplot as plt
+
 
 from scipy.signal import get_window
 
 import hprModel as HPR
+from config import Config
 
 INT16_FAC = (2**15)-1
 INT32_FAC = (2**31)-1
@@ -64,13 +67,16 @@ def retune(fs, y, stepRatio):							#retunes the given sound using linear interp
         iTemp = stepRatio*i
         intItemp = int(iTemp)
         xfrac = iTemp - intItemp
-        newsound[i] += y[intItemp] + xfrac * (y[intItemp+1]-y[intItemp])
+        try:
+        	newsound[i] += y[intItemp] + xfrac * (y[intItemp+1]-y[intItemp])
+        except:
+        	print "wtf"
     arr = np.asarray(newsound)
     return np.float32(arr)/norm_fact[arr.dtype.name]
 
 							#returns frames per second using another method
-
-def fourierResidual(x, fs, window='blackman', M=601, N=1024, t=-100, minSineDur=0.1, nH=20, minf0=200, maxf0=300, f0et=5, harmDevSlope=0.01):
+#doubled M and N to make it work.... 
+def fourierResidual(x, fs, minf0, maxf0, window='blackman', M=1201, N=2048, t=-100, minSineDur=0.1, nH=20,  f0et=5, harmDevSlope=0.01):
 	Ns = 512											#
 	H = 128												#hop size
 
@@ -90,7 +96,8 @@ def stablePoint(inHarmonicArray, surveyDepth, threshold, stabilityValue, pad):
 
 	for i in range(surveyLen-stabilityValue):
 		isCut = False									#indicator that a cut point has been found
-		values = []										#empty list of error values
+		values = []
+		#print inHarmonicArray[i, surveyDepth]										#empty list of error values
 		for j in range(stabilityValue):					#compares array values with values j ahead and logs error values
 			error = np.abs(inHarmonicArray[i, surveyDepth]-inHarmonicArray[i+j, surveyDepth])
 			initVal = inHarmonicArray[i, surveyDepth]
@@ -107,6 +114,8 @@ def stablePoint(inHarmonicArray, surveyDepth, threshold, stabilityValue, pad):
 
 def adjustPhase(H, consFS, conshfreq, conshphase, cfLF, swF, vowelhphase):
 	HopTime = float(H)/consFS
+	if conshfreq[swF, 1] == 0:
+		return
 	freqPeriod = 1/conshfreq[swF, 1]
 
 	for i in range(conshphase.shape[1]):
@@ -168,7 +177,68 @@ def makeSound(hfreq, hmag, hphase, xr, Ns, H, fs):
 def writeSound(fileName, x, fs):
 	sf.write(fileName, x, fs, subtype="PCM_24")
 
-def splice(consFile, vowelFile, cfL, pad, vowelPadMs, f0min, f0max, Ns=512, H=128):
+def getInfo(consFile, f0min, f0max):
+	consX, consFS = soundToArray(consFile)				#read file to array
+	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS, f0min, f0max)
+	plt.figure()
+
+	maxplotfreq = 5000.0
+	H = 512
+	maxplotfreq = 5000.0
+	for i in conshfreq:
+		print i
+
+	# plot the input sound
+	plt.subplot(4,1,1)
+	plt.plot(np.arange(consX.size)/float(consFS), consX)
+	plt.axis([0, consX.size/float(consFS), min(consX), max(consX)])
+	plt.ylabel('amplitude')
+	plt.xlabel('time (sec)')
+	plt.title(consFile+" "+str(f0min)+" "+str(f0max))
+
+	# plot the magnitude spectrogram of residual
+	plt.subplot(4,1,2)
+	'''maxplotbin = int(N*maxplotfreq/consX)
+	numFrames = int(mXr[:,0].size)
+	frmTime = H*np.arange(numFrames)/float(fs)                       
+	binFreq = np.arange(maxplotbin+1)*float(fs)/N                         
+	plt.pcolormesh(frmTime, binFreq, np.transpose(mXr[:,:maxplotbin+1]))
+	plt.autoscale(tight=True)
+	'''
+	# plot harmonic frequencies on residual spectrogram
+	if (conshfreq.shape[1] > 0):
+		harms = conshfreq*np.less(conshfreq,maxplotfreq)
+		harms[harms==0] = np.nan
+		numFrames = int(harms[:,0].size)
+		frmTime = H*np.arange(numFrames)/float(consFS) 
+		plt.plot(frmTime, harms, color='k', ms=3, alpha=1)
+		plt.xlabel('time(s)')
+		plt.ylabel('frequency(Hz)')
+		plt.autoscale(tight=True)
+		plt.title('harmonics')
+	plt.subplot(4,1,3)
+	if (conshmag.shape[1] > 0):
+		harms = conshmag*np.less(conshmag,0)
+		harms[harms==0] = np.nan
+		numFrames = int(harms[:,0].size)
+		frmTime = H*np.arange(numFrames)/float(consFS) 
+		plt.plot(frmTime, harms, color='k', ms=3, alpha=1)
+		plt.xlabel('time(s)')
+		plt.ylabel('amplitude')
+		plt.autoscale(tight=True)
+		plt.title('amplitude')
+	# plot the output sound
+	plt.subplot(4,1,4)
+	plt.plot(np.arange(consxr.size)/float(consFS), consxr)
+	plt.axis([0, consxr.size/float(consFS), min(consxr), max(consxr)])
+	plt.ylabel('amplitude')
+	plt.xlabel('time (sec)')
+	plt.title('output sound: y')
+	
+	#plt.tight_layout()
+	plt.show()
+def splice(consFile, vowelFile, cfL, pad, vowelPadMs, f0min, f0max, outFile,Ns=512, H=128):
+	c = Config()
 	consX, consFS = soundToArray(consFile)				#read both files to arrays
 	vowelX, vowelFS = soundToArray(vowelFile)			#and capture their sample rate
 
@@ -178,21 +248,34 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, f0min, f0max, Ns=512, H=12
 	vowelX, vowelFS = zeroPad(vowelX, vowelFS, 700)		#rewrite the vowel file with
 														#a pad of VOWELPADMS ms
 
-	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS, minf0 = f0min, maxf0 = f0max)
-	vowelhfreq, vowelhmag, vowelhphase, vowelxr = fourierResidual(vowelX, vowelFS, minf0 = f0min, maxf0 = f0max)
+	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS, f0min, f0max)
+	vowelhfreq, vowelhmag, vowelhphase, vowelxr = fourierResidual(vowelX, vowelFS, f0min, f0max)
 														#using SMS Tools, construct arrays
 														#of the components of each sound
 	vowelPadF = (vowelPadMs/1000.0)*framesPerSecond2(soundLength(vowelX, vowelFS), numFrames(vowelhfreq))
 														#the vowel pad in Frames(vs samples or ms)
 	cfLF = cfL/samplesPerFrame(consX, conshfreq)		#cfL in Frames(vs samples)
 	
-	freqStable = stablePoint(conshfreq, 0, 100, 20, pad)#find the stable point of the frequency
-	magStable =  stablePoint(conshmag, 0, 40, 10, pad)	#find the stable point of the ampliitude
+	freqStable = stablePoint(conshfreq, c.freqSurveyDepth, c.freqThreshold, c.freqStabilityValue, pad)#find the stable point of the frequency
+	magStable =  stablePoint(conshmag, c.magSurveyDepth, c.magThreshold, c.magStabilityValue, pad)	#find the stable point of the ampliitude
 
 	stable = max(freqStable, magStable)					#take the maximum for stable point
 	if stable == conshfreq.shape[0]+pad:				#However, the highest never detects one
+		print "None found in Frequency"
 		stable = min(freqStable, magStable)				#use the lower value
-
+	#print freqStable, magStable, conshfreq.shape[0]
+	if stable >= conshfreq.shape[0]:
+		errorString = "No stable point was found with the current settings.\nPlease change these settings in config.py"
+		stable = conshfreq.shape[0]*c.endingCutoff
+		print errorString
+	zerosFreq = 0
+	zerosMag = 0
+	for i in range(conshfreq.shape[0]):
+		if conshfreq[i, 0] != 0:
+			zerosFreq += 1
+		if conshmag[i,0] != 0:
+			zerosMag += 1
+	print "Frequency Stable: {0} Amplitude Stable: {1}".format(freqStable, magStable)
 	adjustMagnitude(conshmag, vowelhmag, stable, vowelPadF)#adjusts the magnitudes of each harmonic
 														#to match with the vowel's harmonics
 
@@ -205,7 +288,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, f0min, f0max, Ns=512, H=12
 	if pR != 1:											#stretch or shrink the consonant as necessary
 		consX = retune(consFS, consX, 1.0/pR)			#to match its pitch to the vowel's
 
-	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS, minf0 = f0min, maxf0 = f0max)
+	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS,f0min ,f0max)
 														#re-harmonic-ize the consonant
 	afterRetuneNumFrames = numFrames(conshfreq)			#the duration in Frames of the consonant after the stretch
 
@@ -215,7 +298,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, f0min, f0max, Ns=512, H=12
 	padAmount = 1000 - (stable*samplesPerFrame(consX, conshfreq)/consFS)*1000
 														#set pad amount to line up the consonant \/ \/ \/ \/
 	consX, consFS = zeroPad(consX, consFS, padAmount)	#add enough samples to put the cut point at 1 second into consonant
-	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS, minf0 = f0min, maxf0 = f0max)
+	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS,f0min, f0max)
 														#create harmonic arrays from the padded consonant
 	stable += padAmount/1000*framesPerSecond2(soundLength(consX, consFS), numFrames(conshfreq))
 														#add the correct amount of frames to the stable cutpoint value
@@ -229,10 +312,11 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, f0min, f0max, Ns=512, H=12
 														#f0 of consonant
 	newX = simpleXFade(consX, vowelX, consFS, stable, cfL, conshfreq)
 														#xfade the two using simple cross fade
-	writeSound("output_sounds/xFade.wav", newX, consFS)
+	writeSound("output_sounds/"+outFile, newX, consFS)
 
 
 def main():
-	splice("../Morgan_44.1/Mod/Mod_20.wav", "../Morgan_44.1/Ah Main/Ah Main_20.wav", 1000, 25, 700, 200, 300, Ns=512, H=128)
+	getInfo("../Morgan_44.1/Mod/Mod_20.wav", 200, 300)
+	#splice("../Morgan_44.1/Mod/Mod_20.wav", "../Morgan_44.1/Ah Main/Ah Main_20.wav", 1000, 25, 700, 200, 300, "01Test.wav", Ns=512, H=128)
 if __name__ == '__main__':
 	main()
