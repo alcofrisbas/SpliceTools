@@ -21,17 +21,24 @@ class Config:
 										#this is a fraction of the consonant
 
 		'''batchSplice Preferences'''
-		
+		#default: 1000
 		self.cfL = 1000					#cross fade length in samples
-		self.pad = 20					#the pad amount added after a stable
+		#default: 20
+		self.pad = 30					#the pad amount added after a stable
 										#point is found
+		#default: 700
 		self.vowelPadMs = 700			#how long to pad the vowel
 
-		self.soundBounds = 0.3			#size of the bounds for the fourier
+		#default: 0.3
+		self.soundBounds = 0.3 			#size of the bounds for the fourier
 										#transform
-		"""Individual Versions:
-		   Edit these after going
-		   through the batch splice"""								
+		'''Individual Versions:
+		Edit these after going
+		through the batch splice'''
 		self.IcfL = 1000
 		self.Ipad = 20
 		self.IvowelPadMs = 700
+        
+													
+										
+		

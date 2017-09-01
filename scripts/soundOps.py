@@ -312,7 +312,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, f0min, f0max, outFile,Ns=5
 														#f0 of consonant
 	newX = simpleXFade(consX, vowelX, consFS, stable, cfL, conshfreq)
 														#xfade the two using simple cross fade
-	writeSound("output_sounds/"+outFile, newX, consFS)
+	writeSound(outFile, newX, consFS)
 
 
 def main():
