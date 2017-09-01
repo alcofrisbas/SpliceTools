@@ -15,4 +15,19 @@ Splice tools has a few dependencies, all pip installable:
 ```python
 pip install numpy scipy matplotlib pysoundfile
 ```
+## An Example
 
+```bash
+cd scripts
+python batchSplice.py
+```
+
+Will run a default splice.
+
+In python:
+
+IN PROGRESS
+
+```python
+from batchSplice import spliceBatch
+```
