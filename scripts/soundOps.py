@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from scipy.signal import get_window
 
-import hprModel as HPR
+from models import hprModel as HPR
 from config import Config
 
 INT16_FAC = (2**15)-1
