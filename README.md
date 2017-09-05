@@ -22,12 +22,12 @@ cd scripts
 python batchSplice.py
 ```
 
-Will run a default splice.
+Will run a default splice on audio files provided
 
 In python:
 
-IN PROGRESS
 
 ```python
 from batchSplice import spliceBatch
+spliceBatch(<firstSound.wav>, <secondSound.wav>, <outputDestination>)
 ```
