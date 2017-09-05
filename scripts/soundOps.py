@@ -374,7 +374,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 														#the vowel pad in Frames(vs samples or ms)
 	cfLF = cfL/samplesPerFrame(consX, conshfreq)		#cfL in Frames(vs samples)
 	#hfreqArray, hmagArray, FreqThreshold,  MagThreshold, surveyDepth, windowLength, verbose
-	stable = stablePoint(conshfreq, conshmag, c.freqThreshold,  c.magThreshold, c.freqSurveyDepth, c.freqStabilityValue, False)+ pad
+	stable = stablePoint(conshfreq, conshmag, c.freqThreshold,  c.magThreshold, c.freqSurveyDepth, c.freqStabilityValue, True)+ pad
 	if stable >= conshfreq.shape[0]:
 		stable = conshfreq.shape[0]-1
 

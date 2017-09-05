@@ -14,6 +14,7 @@ def getApproxTones(startFreq, l):
 	for i in range(1,l):
 		freqList.append(freqList[0]*(a**i))
 	return freqList
+
 def getBounds(tone, boundAmount):
 	bound = tone*boundAmount
 	return (tone-bound, tone+bound)
@@ -40,14 +41,14 @@ def spliceIndividual(consFile, vowelFile, outDirectory,freq):
 	if not os.path.exists(outDirectory): os.makedirs(outDirectory);
 	import config
 	c = config.Config()
-	c = editConfig()
+	#c = editConfig()
 	bounds = getBounds(freq, c.soundBounds)
 	name = getName(consFile, vowelFile)
 	name = outDirectory+"/" + name
 	soundOps.splice(consFile, vowelFile, c.cfL, c.pad, c.vowelPadMs, c.splicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)
 
 def spliceBatch(consFolder, vowelFolder, outDirectory, startFreq):
-	if not os.path.exists(outDirectory): os.makedirs(outDirectory);
+	if not os.path.exists(outDirectory): os.makedirs(outDirectory);#
 	import config
 	c = config.Config()
 	#consFolder = "/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Zahz"
@@ -72,10 +73,10 @@ def spliceBatch(consFolder, vowelFolder, outDirectory, startFreq):
 	if getch.getch() == "v":
 		mode = "v"
 	for i in range(len(fList)):
-		bounds = getBounds(fList[i], c.soundBounds)
-		name = getName(consFiles[i], vowelFiles[i]) 
+		bounds = getBounds(fList[i], c.soundBounds)#
+		name = getName(consFiles[i], vowelFiles[i]) #
 		print name
-		name = outDirectory+"/" + name
+		name = outDirectory+"/" + name#
 
 		print fList[i], bounds[0], bounds[1]
 		if mode == "v":
@@ -85,7 +86,7 @@ def spliceBatch(consFolder, vowelFolder, outDirectory, startFreq):
 				proc.terminate()
 			else:
 				print "no file found, splicing"
-				soundOps.splice(consFiles[i], vowelFiles[i], c.cfL, c.pad, c.vowelPadMs, c.splicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)
+				soundOps.splice(consFiles[i], vowelFiles[i], c.cfL, c.pad, c.vowelPadMs, c.splicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)#
 			print "to flag this as unsatisfactory, press n\nTo play again, press r"
 			f = getch.getch()
 			if f == "n":
@@ -178,7 +179,7 @@ def spliceBatch(consFolder, vowelFolder, outDirectory, startFreq):
 		print fList[i], bounds[0], bounds[1]
 		soundOps.splice(consFiles[i], vowelFiles[i], 1000, 25, 700, bounds[0], bounds[1], name, Ns=512, H=128)'''
 def main():
-	spliceBatch("../Morgan_44.1/Talk","../Morgan_44.1/Ah Main", "testDirectory", 87)
-	#spliceIndividual("/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Talk/Talk_01.wav","/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Ah Main/Ah Main_01.wav", "testDirectory2", 87)
+	#spliceBatch("../Morgan_44.1/Talk","../Morgan_44.1/Ah Main", "testDirectory", 87)
+	spliceIndividual("/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Talk/Talk_06.wav","/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Ah Main/Ah Main_06.wav", "testDirectory2", 120)
 if __name__ == '__main__':
 	main()
