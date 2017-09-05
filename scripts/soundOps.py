@@ -261,8 +261,8 @@ def getInfo(consFile, f0min, f0max, H=128):
 
 	maxplotfreq = 5000.0
 	maxplotfreq = 5000.0
-	for i in conshfreq:
-		print i
+	#for i in conshfreq:
+	#	print i
 
 	# plot the input sound
 	plt.subplot(4,1,1)
@@ -311,7 +311,7 @@ def getInfo(consFile, f0min, f0max, H=128):
 	plt.xlabel('time (sec)')
 	plt.title('output sound: y')
 	
-	#plt.tight_layout()
+	plt.tight_layout()
 	plt.show()
 
 def graphError(consFile, f0min, f0max, Ns=512, H=128):
@@ -335,7 +335,7 @@ def graphError(consFile, f0min, f0max, Ns=512, H=128):
 		frmTime = H*np.arange(numFrames)/float(consFS) 
 		plt.plot(frmTime, harms, color='k', ms=3, alpha=1)
 		plt.xlabel('time(s)')
-		plt.ylabel('frequency(Hz)')
+		plt.ylabel('error ratio')
 		plt.autoscale(tight=True)
 		plt.title('frequency error')
 
@@ -347,9 +347,9 @@ def graphError(consFile, f0min, f0max, Ns=512, H=128):
 		frmTime = H*np.arange(numFrames)/float(consFS) 
 		plt.plot(frmTime, harms, color='k', ms=3, alpha=1)
 		plt.xlabel('time(s)')
-		plt.ylabel('some number')
+		plt.ylabel('magnitude error amount')
 		plt.autoscale(tight=True)
-		plt.title('mag error')
+		plt.title('magnitude error')
 	plt.tight_layout()
 	plt.show()
 
@@ -436,6 +436,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 
 def main():
 	getInfo("../Morgan_44.1/Mod/Mod_20.wav", 200, 300)
+	graphError("../Morgan_44.1/Mod/Mod_20.wav", 200, 300)
 	#splice("../Morgan_44.1/Mod/Mod_20.wav", "../Morgan_44.1/Ah Main/Ah Main_20.wav", 1000, 25, 700, 200, 300, "01Test.wav", Ns=512, H=128)
 if __name__ == '__main__':
 	main()
