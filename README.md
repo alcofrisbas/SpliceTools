@@ -44,3 +44,5 @@ getInfo(<soundFile>, <minimumFrequencyBound>, <maximumFrequencyBound>)
 from soundOps import graphError
 graphError(<soundFile>, <minimumFrequencyBound>, <maximumFrequencyBound>)
 ```
+
+<img src="https://github.com/alcofrisbas/SpliceTools/blob/master/images/graphError.png" width="400">
