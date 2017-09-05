@@ -46,7 +46,7 @@ def spliceIndividual(consFile, vowelFile, outDirectory,freq):
 	name = outDirectory+"/" + name
 	soundOps.splice(consFile, vowelFile, c.cfL, c.pad, c.vowelPadMs, c.splicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)
 
-def spliceBatch(consFolder, vowelFolder, outDirectory):
+def spliceBatch(consFolder, vowelFolder, outDirectory, startFreq):
 	if not os.path.exists(outDirectory): os.makedirs(outDirectory);
 	import config
 	c = config.Config()
@@ -59,7 +59,7 @@ def spliceBatch(consFolder, vowelFolder, outDirectory):
 	if vowelFolder[-1] == " ":
 		vowelFolder = vowelFolder[:-1]
 	vowelFiles = [vowelFolder+"/"+f for f in os.listdir(vowelFolder) if isfile(join(vowelFolder, f)) and not f.startswith('.')]
-	startFreq = 87
+
 	#startFreq = input("Enter the approximate frequency of the first tone: ")
 	#splice(consFile, vowelFile, cfL, pad, vowelPadMs, f0min, f0max, Ns=512, H=128)
 	fList = getApproxTones(startFreq, len(consFiles))
@@ -178,7 +178,7 @@ def spliceBatch(consFolder, vowelFolder, outDirectory):
 		print fList[i], bounds[0], bounds[1]
 		soundOps.splice(consFiles[i], vowelFiles[i], 1000, 25, 700, bounds[0], bounds[1], name, Ns=512, H=128)'''
 def main():
-	spliceBatch("../Morgan_44.1/Talk","../Morgan_44.1/Ah Main", "testDirectory")
+	spliceBatch("../Morgan_44.1/Talk","../Morgan_44.1/Ah Main", "testDirectory", 87)
 	#spliceIndividual("/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Talk/Talk_01.wav","/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Ah Main/Ah Main_01.wav", "testDirectory2", 87)
 if __name__ == '__main__':
 	main()
