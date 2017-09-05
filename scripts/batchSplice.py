@@ -180,6 +180,6 @@ def spliceBatch(consFolder, vowelFolder, outDirectory, startFreq):
 		soundOps.splice(consFiles[i], vowelFiles[i], 1000, 25, 700, bounds[0], bounds[1], name, Ns=512, H=128)'''
 def main():
 	#spliceBatch("../Morgan_44.1/Talk","../Morgan_44.1/Ah Main", "testDirectory", 87)
-	spliceIndividual("/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Talk/Talk_06.wav","/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Ah Main/Ah Main_06.wav", "testDirectory2", 120)
+	spliceIndividual("/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Talk/Talk_06.wav","/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Ah Main/Ah Main_06.wav", "testDirectory", 120)
 if __name__ == '__main__':
 	main()
