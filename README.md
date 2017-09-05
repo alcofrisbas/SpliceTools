@@ -26,10 +26,9 @@ Will run a default splice on audio files provided
 
 In python:
 
-
 ```python
 from batchSplice import spliceBatch
-spliceBatch(<firstSound.wav>, <secondSound.wav>, <outputDestination>)
+spliceBatch(<firstFolder>, <secondFolder>, <outputDestination>)
 ```
 
 ## Graphing and Visual Representations
