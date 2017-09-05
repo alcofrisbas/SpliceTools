@@ -1,11 +1,12 @@
 import soundOps
 import os
 from os.path import isfile, join
-from config import Config
+
 
 import subprocess
 import time
 import getch
+import imp
 #fn = f0 * (a)^n where a = 2^1/12 
 def getApproxTones(startFreq, l):
 	a = 2**(1.0/12)
@@ -28,9 +29,27 @@ def getNum(consFile, vowelFile):
 		return consInit
 	errorString = "Please Provide Batch Folders with matching Notes... \n your first conosonant is {0} and your first vowel is {1}".format(consInit, vowelInit)
 	raise ValueError(errorString)
+def editConfig():
+	os.system("vi config.py")
+	import config
+	config = reload(config)
+	c = config.Config()
+	return c
+
+def spliceIndividual(consFile, vowelFile, outDirectory,freq):
+	if not os.path.exists(outDirectory): os.makedirs(outDirectory);
+	import config
+	c = config.Config()
+	c = editConfig()
+	bounds = getBounds(freq, c.soundBounds)
+	name = getName(consFile, vowelFile)
+	name = outDirectory+"/" + name
+	soundOps.splice(consFile, vowelFile, c.cfL, c.pad, c.vowelPadMs, c.splicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)
+
 def spliceBatch(consFolder, vowelFolder, outDirectory):
 	if not os.path.exists(outDirectory): os.makedirs(outDirectory);
-	c = Config()
+	import config
+	c = config.Config()
 	#consFolder = "/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Zahz"
 	if consFolder[-1] == " ":
 		consFolder = consFolder[:-1]
@@ -47,15 +66,14 @@ def spliceBatch(consFolder, vowelFolder, outDirectory):
 	redoList = []
 	print "would you like to change presets: press y for yes; any other key for no"
 	if getch.getch() == "y":
-		#proc1 = subprocess.Popen(["vi", "config.py"])
-		os.system("vi config.py")
+		c = editConfig()
 	mode = "n"#normal
 	print "press v for verbose mode, which enables flagging and individual editing"
 	if getch.getch() == "v":
 		mode = "v"
 	for i in range(len(fList)):
 		bounds = getBounds(fList[i], c.soundBounds)
-		name = getName(consFiles[i], vowelFiles[i]) #print i, fList[i], bounds
+		name = getName(consFiles[i], vowelFiles[i]) 
 		print name
 		name = outDirectory+"/" + name
 
@@ -67,7 +85,7 @@ def spliceBatch(consFolder, vowelFolder, outDirectory):
 				proc.terminate()
 			else:
 				print "no file found, splicing"
-				soundOps.splice(consFiles[i], vowelFiles[i], c.cfL, c.pad, c.vowelPadMs, bounds[0], bounds[1], name, Ns=512, H=128)
+				soundOps.splice(consFiles[i], vowelFiles[i], c.cfL, c.pad, c.vowelPadMs, c.splicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)
 			print "to flag this as unsatisfactory, press n\nTo play again, press r"
 			f = getch.getch()
 			if f == "n":
@@ -88,10 +106,10 @@ def spliceBatch(consFolder, vowelFolder, outDirectory):
 				continue
 			if f == "q":
 				break
-			soundOps.splice(consFiles[i], vowelFiles[i], c.cfL, c.pad, c.vowelPadMs, bounds[0], bounds[1], name, Ns=512, H=128)
+			soundOps.splice(consFiles[i], vowelFiles[i], c.cfL, c.pad, c.vowelPadMs, c.splicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)
 		
 		else:
-			soundOps.splice(consFiles[i], vowelFiles[i], c.cfL, c.pad, c.vowelPadMs, bounds[0], bounds[1], name, Ns=512, H=128)
+			soundOps.splice(consFiles[i], vowelFiles[i], c.cfL, c.pad, c.vowelPadMs, c.splicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)
 		
 		'''if mode == "v":
 			fullName = "output_sounds/"+ name
@@ -120,8 +138,8 @@ def spliceBatch(consFolder, vowelFolder, outDirectory):
 			
 			print "editing {}".format(name)
 			if getch.getch() == "e":
-				os.system("vi config.py")
-				soundOps.splice(i[0], i[1], c.IcfL, c.Ipad, c.IvowelPadMs, bounds[0], bounds[1], name, Ns=512, H=128)
+				c = editConfig()
+				soundOps.splice(i[0], i[1], c.IcfL, c.Ipad, c.IvowelPadMs, c.IsplicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)
 			proc = subprocess.Popen(["afplay",name])
 			time.sleep(2)
 			proc.terminate()
@@ -129,8 +147,8 @@ def spliceBatch(consFolder, vowelFolder, outDirectory):
 			f = getch.getch()
 			while f == "e" or f == "r":
 				if f == "e":
-					os.system("vi config.py")
-					soundOps.splice(i[0], i[1], c.IcfL, c.Ipad, c.IvowelPadMs, bounds[0], bounds[1], name, Ns=512, H=128)
+					c = editConfig
+					soundOps.splice(i[0], i[1], c.IcfL, c.Ipad, c.IvowelPadMs, c.IsplicePointMs, bounds[0], bounds[1], name, Ns=512, H=128)
 				proc = subprocess.Popen(["afplay",name])
 				time.sleep(2)
 				proc.terminate()
@@ -160,6 +178,7 @@ def spliceBatch(consFolder, vowelFolder, outDirectory):
 		print fList[i], bounds[0], bounds[1]
 		soundOps.splice(consFiles[i], vowelFiles[i], 1000, 25, 700, bounds[0], bounds[1], name, Ns=512, H=128)'''
 def main():
-	spliceBatch("/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Zahz","/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Ah Main", "testDirectory")
+	spliceBatch("../Morgan_44.1/Talk","../Morgan_44.1/Ah Main", "testDirectory")
+	#spliceIndividual("/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Talk/Talk_01.wav","/Users/backup/Desktop/gits/SpliceTools/Morgan_44.1/Ah Main/Ah Main_01.wav", "testDirectory2", 87)
 if __name__ == '__main__':
 	main()
