@@ -31,3 +31,15 @@ In python:
 from batchSplice import spliceBatch
 spliceBatch(<firstSound.wav>, <secondSound.wav>, <outputDestination>)
 ```
+
+## Graphing and Visual Representations
+
+```python
+from soundOps import getInfo
+getInfo(<soundFile>, <minimumFrequencyBound>, <maximumFrequencyBound>)
+```
+
+```python
+from soundOps import graphError
+graphError(<soundFile>, <minimumFrequencyBound>, <maximumFrequencyBound>)
+```
