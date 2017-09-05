@@ -254,11 +254,12 @@ def makeSound(hfreq, hmag, hphase, xr, Ns, H, fs):
 def writeSound(fileName, x, fs):
 	sf.write(fileName, x, fs, subtype="PCM_24")
 
-def getInfo(consFile, f0min, f0max, H=512):
+def getInfo(consFile, f0min, f0max, H=128):
 	consX, consFS = soundToArray(consFile)				#read file to array
 	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS, f0min, f0max)
 	plt.figure()
 
+	maxplotfreq = 5000.0
 	maxplotfreq = 5000.0
 	for i in conshfreq:
 		print i
