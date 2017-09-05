@@ -38,7 +38,7 @@ spliceBatch(<firstSound.wav>, <secondSound.wav>, <outputDestination>)
 from soundOps import getInfo
 getInfo(<soundFile>, <minimumFrequencyBound>, <maximumFrequencyBound>)
 ```
-![none](https://github.com/alcofrisbas/SpliceTools/blob/master/images/getInfo.png)
+![Image missing](https://github.com/alcofrisbas/SpliceTools/blob/master/images/getInfo.png | width=100)
 ```python
 from soundOps import graphError
 graphError(<soundFile>, <minimumFrequencyBound>, <maximumFrequencyBound>)
