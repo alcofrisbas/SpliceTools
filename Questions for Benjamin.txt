@@ -1,0 +1,24 @@
+
+
+
+
+
+
+
+
+In Terminal, why does it say "android_363f4a1a5eda3513:scripts backup$"
+
+What was the keyboard shortcut so I don't have to retype "Python batchSplice.py"
+
+Can I place "config.py" into batchSplice?
+
+Is the residual also crossfaded?
+
+Where do we select Blacman or other FFT modes?
+
+Why are there duplicates that say "pyc" instead of py?
+
+If there is a module named "soundfile", should we alos have a variable named "soundFile"?
+
+Why are we using soundfile module instead of what they used in SMS-Tools? 
+
