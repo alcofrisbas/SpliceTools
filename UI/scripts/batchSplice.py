@@ -1,5 +1,5 @@
 import json
-import os
+import os, sys
 from os.path import isfile, join
 import soundOps
 
@@ -82,7 +82,12 @@ def setup(settings):
 	# ==============================================================
 	padslope = getSlope(0,InitPad,200,EndPad)
 	cfLslope = getSlope(0,icfL,200,ecfL)
-	if not os.path.exists(outDirectory): os.makedirs(outDirectory);
+	
+	try:
+		if not os.path.exists(outDirectory): os.makedirs(outDirectory);
+	except:
+		print("improperly configured directories, please delete settings.json.")
+		sys.exit(1)
 
 	if consFolder[-1] == " ":
 		consFolder = consFolder[:-1]
