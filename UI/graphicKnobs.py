@@ -106,4 +106,9 @@ class Graphic(ttk.LabelFrame):
 		self.yR = r
 
 if __name__ == '__main__':
-	pass
+	root = Tk()
+	g = Graphic(root, 10, 100, "Test")
+	g.grid()
+	root.mainloop()
+
+
