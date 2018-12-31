@@ -90,8 +90,8 @@ class Graphic(ttk.LabelFrame):
 
 	def get(self):
 		pads = []
-		l = int(self.lVar.get())
-		r = int(self.rVar.get())
+		l = int(self.lVar.get()) if self.l.get() else 0
+		r = int(self.rVar.get()) if self.r.get() else 0
 		slope = (float(r)-l)/(float(self.size)-0)
 		for p in range(self.length):
 			translatedPoint = p*self.size/self.length
