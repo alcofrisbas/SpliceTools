@@ -3,3 +3,4 @@ scripts/testDirectory/*.wav
 *.pyc
 *.DS_Store
 
+.DS_Store
