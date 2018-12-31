@@ -1,3 +1,5 @@
 scripts/output_sounds/spliced/*.wav
 scripts/testDirectory/*.wav
 *.pyc
+*.DS_Store
+
