@@ -165,7 +165,7 @@ class MainView:
 	#	pass
 
 	def chooseFolder(self, var):
-		f = tkFileDialog.askdirectory()
+		f = tkFileDialog.askdirectory(initialdir = ".")
 		self.settings[var] = f
 		self.mainSettings.setValues(self.settings)
 		#print var.get()
