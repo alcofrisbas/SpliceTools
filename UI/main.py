@@ -153,9 +153,10 @@ class MainView:
 		#print self.setupOut
 
 	def readSettings(self):
-		if not os.path.exists('settings.json'): 
-			with open('settings.json','w') as w: 
-				w.write("{}")
+		if not os.path.exists('settings.json'):
+			with open('default_settings.json') as r:
+				with open('settings.json','w') as w: 
+					w.write(r.read())
 		self.settings = json.loads(open('settings.json').read())
 		self.setupOut = setup(self.settings)
 		self.numFiles = len(self.setupOut["outFiles"])

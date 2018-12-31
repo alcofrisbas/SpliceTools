@@ -85,8 +85,9 @@ def setup(settings):
 	
 	try:
 		if not os.path.exists(outDirectory): os.makedirs(outDirectory);
-	except:
+	except Exception as e:
 		print("improperly configured directories, please delete settings.json.")
+		print e
 		sys.exit(1)
 
 	if consFolder[-1] == " ":

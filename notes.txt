@@ -1,0 +1,76 @@
+important files:
+
+batchSplice.py
+-- main controls for splicing
+soundOps.py
+-- interface for SMS and our own
+   backend methods
+main.py
+-- UI and control
+
+
+pad is something that we think moves the
+consonant file AFTER steady point is found.
+
+
+UI NOTES:
+Graphic knob:
+  - bottom slider sets scale for outpu
+Apply button:
+  - writes to settings.json, which other scripts
+  use for splicing.
+
+
+all input info: UI settings.json and
+config.py.
+
+ns and hop are hard-coded into batchSplice.
+
+
+
+
+main.py creates the UI
+
+"consFolder"        Folder where start files are
+"vowelFolder"       Folder where volwels are
+"initial frequency" Frequency of first file in folder
+"xFade Length"      
+"Vowel Pad"         
+"Splice Point"      
+"Tuning Bounds"     Ratio for initial frequency - Example: if set to .3, then if freq is 100, then bounds are 70 to 130
+"outFolder"         Folder where spliced files will go
+"fred"              Unknown folder (probably unused)
+
+"consFile"
+"vowelFile"
+"initial frequency"
+"xFade Length"
+"InitPad"           Unique to indiv settings
+"EndPad"            Unique to indiv settings
+"Vowel Pad"
+"Splice Point"
+"Tuning Bounds"
+"outFile"
+
+
+Here's the processing flowchart:
+
+"Process Batch" button triggers the spliceByBatch function inside main.py
+  Label changes from "Idle" to "Working"
+  Calls master.update_idletasks             ???
+  Calls "applyMainSettings" which reads settings
+    Prints settings
+  Calls "for g in self.graphs"              ???
+    Prints "self.graphGet(g)"               ???
+  Print self.setupOut["freqs"]              Sequential chromatic frequencies based on starting frequency entered in UI
+  Print len(self.setupOut["freqs"])         How many elements in each folder?
+  Loop for each element in Folder
+    Call "splice"                           Found in batchSplice.py     splice(i, setupOut, settings)
+      Computes upper and lower frequency bounds for fundamantal freq for this particular pitch
+      Call
+
+
+
+
+
+
