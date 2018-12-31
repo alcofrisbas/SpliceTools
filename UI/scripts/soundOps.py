@@ -1,11 +1,16 @@
+# math
 import numpy as np
+# input audio processing
 import soundfile as sf
-import time
+# more math
 import math
+# graphing for tests
 import matplotlib.pyplot as plt
+# sound math
 from scipy.signal import get_window
-
+# sms tools
 from models import hprModel as HPR
+# configurations
 import config
 
 INT16_FAC = (2**15)-1
@@ -47,7 +52,7 @@ def framesPerSecond(fs, spf):
 	return float(fs)/spf 								#returns frames per second
 def framesPerSecond2(length, numFrames):
 	length = length/1000.0
-	return numFrames/length 
+	return numFrames/length
 
 def infoAt(hArray, f):
 	return hArray[f, 0]									#returns information at root harmonic at that point (f = frame)
@@ -74,7 +79,7 @@ def sliceHArray(hArray, from_, to_):					#This is so we can have zero in on the 
 	return np.float32(arr)/norm_fact[arr.dtype.name]
 
 def retune(fs, y, stepRatio):							#retunes the given sound using linear interpolation
-    
+
     lastI = len(y)/(float(stepRatio)/1)					#len(y) is length of y is samples (built in command)
     #print lastI
     newsound = []
@@ -93,11 +98,8 @@ def retune(fs, y, stepRatio):							#retunes the given sound using linear interp
     #print "in return:",averageFreq(y)
     return ret
 							#returns frames per second using another method
-#doubled M and N to make it work.... 
-def fourierResidual(x, fs, minf0, maxf0, window='blackman', M=1201, N=2048, t=-100, minSineDur=0.1, nH=20,  f0et=5, harmDevSlope=0.01):
-	Ns = 512											#
-	H = 128												#hop size
-
+#doubled M and N to make it work....
+def fourierResidual(x, fs, minf0, maxf0, Ns, H, window='blackman', M=1201, N=2048, t=-100, minSineDur=0.1, nH=20,  f0et=5, harmDevSlope=0.01):
 	w = get_window(window, M)							#get analysis window
 	hfreq, hmag, hphase, xr = HPR.hprModelAnal(x, fs, w, N, H, t, minSineDur, nH, minf0, maxf0, f0et, harmDevSlope)
 	return hfreq, hmag, hphase, xr						#returns 2D arrays and 1D array of residual sound
@@ -138,7 +140,7 @@ def stablePoint(hfreqArray, hmagArray, FreqThreshold,  MagThreshold, surveyDepth
 	stabilityValue: number of frames to test for stability
 	"""
 	surveyLen = hfreqArray.shape[0]				#duration of sound for for loop
-	
+
 	print surveyDepth
 	values = []
 	for h in range(surveyDepth):
@@ -149,7 +151,7 @@ def stablePoint(hfreqArray, hmagArray, FreqThreshold,  MagThreshold, surveyDepth
 	 				break
 				initValFreq = hfreqArray[i, h]
 	 			compValFreq = hfreqArray[i+j, h]
-	 			
+
 	 			initValMag = hmagArray[i, h]
 	 			compValMag = hmagArray[i+j, h]
 
@@ -184,7 +186,7 @@ def errorValues(hfreqArray, hmagArray):
 	freqErrorValues = []
 	magErrorValues = []
 	surveyDepth = hfreqArray.shape[1]
-	
+
 	for i in range(surveyLen-1):
 		freqList = []
 		magList = []
@@ -200,7 +202,7 @@ def errorValues(hfreqArray, hmagArray):
 			magError = np.abs(initValMag - compValMag)
 			freqList.append(freqError)
 			magList.append(magError)
-		
+
 		freqErrorValues.append(freqList)
 		magErrorValues.append(magList)
 	return np.array(freqErrorValues), np.array(magErrorValues)
@@ -243,13 +245,17 @@ def adjustMagnitude(conshmag, vowelhmag, stable, vowelPadF):
 			conshmag[j,i] = conshmag[j,i]*ratio
 
 def simpleXFade(consX, vowelX, consFS, swF, cfL, conshfreq):
+	"""
+	consX is array reprs. wav file 44100/sec
+	same with vowelX.
+	"""
 	swSample = swF*samplesPerFrame(consX, conshfreq)
 	addAmount = vowelX.shape[0]-consX.shape[0]
 	if addAmount > 0:
 		consX = np.concatenate((consX, np.zeros(addAmount)))
 	else:
 		consX = np.resize(consX, vowelX.shape[0])
-	
+
 	for i in range(0, consX.shape[0]):
 		if i < swSample-cfL:
 			vowelX[i] = 0
@@ -298,8 +304,8 @@ def getInfo(consFile, f0min, f0max, H=128):				#Graphs various things
 	plt.subplot(4,1,2)
 	'''maxplotbin = int(N*maxplotfreq/consX)
 	numFrames = int(mXr[:,0].size)
-	frmTime = H*np.arange(numFrames)/float(fs)                       
-	binFreq = np.arange(maxplotbin+1)*float(fs)/N                         
+	frmTime = H*np.arange(numFrames)/float(fs)
+	binFreq = np.arange(maxplotbin+1)*float(fs)/N
 	plt.pcolormesh(frmTime, binFreq, np.transpose(mXr[:,:maxplotbin+1]))
 	plt.autoscale(tight=True)
 	'''
@@ -308,7 +314,7 @@ def getInfo(consFile, f0min, f0max, H=128):				#Graphs various things
 		harms = conshfreq*np.less(conshfreq,maxplotfreq)
 		harms[harms==0] = np.nan
 		numFrames = int(harms[:,0].size)
-		frmTime = H*np.arange(numFrames)/float(consFS) 
+		frmTime = H*np.arange(numFrames)/float(consFS)
 		plt.plot(frmTime, harms, color='k', ms=3, alpha=1)
 		plt.xlabel('time(s)')
 		plt.ylabel('frequency(Hz)')
@@ -319,7 +325,7 @@ def getInfo(consFile, f0min, f0max, H=128):				#Graphs various things
 		harms = conshmag*np.less(conshmag,0)
 		harms[harms==0] = np.nan
 		numFrames = int(harms[:,0].size)
-		frmTime = H*np.arange(numFrames)/float(consFS) 
+		frmTime = H*np.arange(numFrames)/float(consFS)
 		plt.plot(frmTime, harms, color='k', ms=3, alpha=1)
 		plt.xlabel('time(s)')
 		plt.ylabel('amplitude')
@@ -332,7 +338,7 @@ def getInfo(consFile, f0min, f0max, H=128):				#Graphs various things
 	plt.ylabel('amplitude')
 	plt.xlabel('time (sec)')
 	plt.title('output sound: y')
-	
+
 	plt.tight_layout()
 	plt.show()
 
@@ -340,13 +346,13 @@ def graphError(consFile, f0min, f0max, Ns=512, H=128):
 	c = config.Config()
 	consX, consFS = soundToArray(consFile)				#read both files to arrays
 
-	
+
 	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS, f0min, f0max)
 														#using SMS Tools, construct arrays
 														#of the components of each sound
-	
+
 	hfreqError, hmagError = errorValues(conshfreq, conshmag)
-	
+
 	maxplotfreq = 60
 	plt.figure()
 	plt.subplot(2,1,1)
@@ -354,7 +360,7 @@ def graphError(consFile, f0min, f0max, Ns=512, H=128):
 		harms = hfreqError*np.less(hfreqError,maxplotfreq)
 		harms[harms==0] = np.nan
 		numFrames = int(harms[:,0].size)
-		frmTime = H*np.arange(numFrames)/float(consFS) 
+		frmTime = H*np.arange(numFrames)/float(consFS)
 		plt.plot(frmTime, harms, color='k', ms=3, alpha=1)
 		plt.xlabel('time(s)')
 		plt.ylabel('error ratio')
@@ -366,7 +372,7 @@ def graphError(consFile, f0min, f0max, Ns=512, H=128):
 		harms = hmagError*np.less(hmagError,maxplotfreq)
 		harms[harms==0] = np.nan
 		numFrames = int(harms[:,0].size)
-		frmTime = H*np.arange(numFrames)/float(consFS) 
+		frmTime = H*np.arange(numFrames)/float(consFS)
 		plt.plot(frmTime, harms, color='k', ms=3, alpha=1)
 		plt.xlabel('time(s)')
 		plt.ylabel('magnitude error amount')
@@ -377,7 +383,7 @@ def graphError(consFile, f0min, f0max, Ns=512, H=128):
 
 
 
-def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0max, outFile,Ns=512, H=128):
+def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0max, outFile, Ns=512, H=128):
 	c = config.Config()
 	consX, consFS = soundToArray(consFile)				#read both files to arrays
 	vowelX, vowelFS = soundToArray(vowelFile)			#and capture their sample rate
@@ -389,8 +395,8 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 	vowelX, vowelFS = zeroPad(vowelX, vowelFS, 700)		#rewrite the vowel file with
 														#a pad of VOWELPADMS ms
 
-	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS, f0min, f0max)
-	vowelhfreq, vowelhmag, vowelhphase, vowelxr = fourierResidual(vowelX, vowelFS, f0min, f0max)
+	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS, f0min, f0max, Ns,H)
+	vowelhfreq, vowelhmag, vowelhphase, vowelxr = fourierResidual(vowelX, vowelFS, f0min, f0max,Ns, H)
 														#using SMS Tools, construct arrays
 														#of the components of each sound
 	vowelPadF = (vowelPadMs/1000.0)*framesPerSecond2(soundLength(vowelX, vowelFS), numFrames(vowelhfreq))
@@ -428,7 +434,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 	#vowelFreqF0 = infoAt(vowelhfreq, 1.0*framesPerSecond(vowelFS, samplesPerFrame(vowelX, vowelhfreq)))
 	consFreqF0 = averageFreq(conshfreq)
 	print "original consontant Frequency:",consFreqF0
-	
+
 	vowelFreqF0 = averageFreq(vowelhfreq)
 	print "original vowel Frequency:",vowelFreqF0	#find the f0 frequency of the vowel at the stable point
 	pR = pitchRatio(consFreqF0, vowelFreqF0)			#find the pitch ration between the frequencies

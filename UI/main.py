@@ -175,6 +175,8 @@ class MainView:
 
 	def applyMainSettings(self):
 		self.settings = self.mainSettings.get()
+		print "Here come the crossfades"
+		print self.graphs["cfls"]
 		print self.settings
 
 		with open('settings.json','w') as w:
