@@ -443,7 +443,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 	#if pR != 1:								#stretch or shrink the consonant as necessary
 	consX = retune(consFS, consX, 1/pR)			#to match its pitch to the vowel's
 	#writeSound(outFile[:-4]+".cons0.wav", consX, consFS)
-	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS,f0min ,f0max)
+	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS,f0min ,f0max, Ns, H)
 														#re-harmonic-ize the consonant
 	afterRetuneNumFrames = numFrames(conshfreq)			#the duration in Frames of the consonant after the stretch
 	consFreqF0 = averageFreq(conshfreq)
@@ -457,7 +457,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 														#set pad amount to line up the consonant \/ \/ \/ \/
 	consX, consFS = zeroPad(consX, consFS, padAmount)	#add enough samples to put the cut point at 1 second into consonant
 	#writeSound(outFile[:-4]+".cons1.wav", consX, consFS)
-	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS,f0min, f0max)
+	conshfreq, conshmag, conshphase, consxr = fourierResidual(consX, consFS,f0min, f0max, Ns, H)
 														#create harmonic arrays from the padded consonant
 	stable += padAmount/1000.0*framesPerSecond2(soundLength(consX, consFS), numFrames(conshfreq))
 														#add the correct amount of frames to the stable cutpoint value

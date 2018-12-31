@@ -32,16 +32,18 @@ class Graphic(ttk.LabelFrame):
 		self.buttonFrame = ttk.Frame(self.mainFrame)
 		self.buttonFrame.grid(row = 0, column = 1)
 
-		self.l = ttk.Scale(self.mainFrame, from_=0, to=self.size, command=lambda x: self.drawLine("l"),
+		self.l = ttk.Scale(self.mainFrame, from_=0, to=self.size,
 						   orient=VERTICAL)
 		self.l.grid(row=0,column=0)
 		self.l.set(self.size/2)
 
-		self.r = ttk.Scale(self.mainFrame, from_=0, to=self.size, command=lambda x: self.drawLine("r"),
+		self.r = ttk.Scale(self.mainFrame, from_=0, to=self.size, 
 						   orient=VERTICAL)
 		self.r.grid(row=0,column=2)
 		self.r.set(self.size/2)
 		
+		self.l.config(command=lambda x: self.drawLine("l"))
+		self.r.config(command=lambda x: self.drawLine("r"))
 
 		self.lLabel = ttk.Label(self.mainFrame, textvariable=self.lVar)
 		self.lLabel.grid(row=1,column=0)

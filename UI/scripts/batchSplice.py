@@ -127,7 +127,7 @@ def splice(i, setupOut, settings):
 	splicePointMs =  int(settings["Splice Point"])
 	soundBounds = float(settings["Tuning Bounds"])
 	bounds = getBounds(setupOut["freqs"][i], soundBounds)
-	soundOps.splice(setupOut["consFiles"][i], setupOut["vowelFiles"][i], setupOut["cfls"][i], setupOut["pads"][i], vowelPadMs, splicePointMs, bounds[0], bounds[1], setupOut["outFiles"][i], Ns=512, H=128)
+	soundOps.splice(setupOut["consFiles"][i], setupOut["vowelFiles"][i], setupOut["cfls"][i], setupOut["pads"][i], vowelPadMs, splicePointMs, bounds[0], bounds[1], setupOut["outFiles"][i], Ns = 512, H = 128)
 	print setupOut["outFiles"][i]
 
 	

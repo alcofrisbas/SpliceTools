@@ -148,7 +148,8 @@ class MainView:
 
 	def graphGet(self,category):
 		self.setupOut[category] = self.graphs[category].get()
-		print category
+		print("============ graphicKnobs =============")
+		print category, self.setupOut[category]
 		#print self.setupOut
 
 	def readSettings(self):
