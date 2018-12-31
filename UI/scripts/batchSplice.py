@@ -129,6 +129,7 @@ def splice(i, setupOut, settings):
 	bounds = getBounds(setupOut["freqs"][i], soundBounds)
 	soundOps.splice(setupOut["consFiles"][i], setupOut["vowelFiles"][i], setupOut["cfls"][i], setupOut["pads"][i], vowelPadMs, splicePointMs, bounds[0], bounds[1], setupOut["outFiles"][i], Ns = 512, H = 128)
 	print setupOut["outFiles"][i]
+	print "CFL:::::::",setupOut["cfls"][i]
 
 	
 

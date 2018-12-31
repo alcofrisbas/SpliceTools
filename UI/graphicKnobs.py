@@ -33,12 +33,12 @@ class Graphic(ttk.LabelFrame):
 		self.buttonFrame.grid(row = 0, column = 1)
 
 		self.l = ttk.Scale(self.mainFrame, from_=0, to=self.size,
-						   orient=VERTICAL)
+						   orient=VERTICAL, value=0)
 		self.l.grid(row=0,column=0)
 		self.l.set(self.size/2)
 
 		self.r = ttk.Scale(self.mainFrame, from_=0, to=self.size, 
-						   orient=VERTICAL)
+						   orient=VERTICAL, value=0)
 		self.r.grid(row=0,column=2)
 		self.r.set(self.size/2)
 		
@@ -74,8 +74,8 @@ class Graphic(ttk.LabelFrame):
 		#print a
 		#self.c.delete(self.line)
 		self.c.delete(self.poly)
-		self.yL = int(self.l.get())
-		self.yR = int(self.r.get())
+		self.yL = int(self.l.get()) if self.l.get() else 0
+		self.yR = int(self.r.get()) if self.r.get() else 0
 
 		#self.line = self.c.create_line(0, self.yL, self.size, self.yR)
 		self.poly = self.c.create_polygon(0,self.size,
