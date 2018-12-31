@@ -32,7 +32,7 @@ class MainView:
 
 		self.master.config(menu=self.menubar)
 
-		
+		# True/False is Editable or Not.
 		self.mainSettingsList = [["consFolder",False],
 							 ["vowelFolder",False],
 							 ["initial frequency",True],
