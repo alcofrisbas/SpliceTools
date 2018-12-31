@@ -469,7 +469,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 	consX, consXH = makeSound(conshfreq, conshmag, conshphase, consxr, Ns, H, consFS)
 														#write each harmonic (using SMS tools) to a wavy array
 	consOut = "/".join(outFile.split("/")[:-1])+"/ZZ"+outFile.split("/")[-1][:-4]+".consOnly.wav"
-	writeSound(consOut, consX, consFS)
+	#writeSound(consOut, consX, consFS)
 	consFreqF0 = averageFreq(conshfreq) #infoAt(conshfreq, 1.0*framesPerSecond(consFS, samplesPerFrame(consX, conshfreq)))
 														#f0 of consonant
 	vowelFreqF0 = averageFreq(vowelhfreq)
@@ -480,7 +480,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 														#xfade the two using simple cross fade
 	choppedOut = "/".join(outFile.split("/")[:-1])+"/ZZZ"+outFile.split("/")[-1][:-4]+".consFade.wav"
 	choppedX = simpleXFade(consX, blankX, consFS, stable, cfL, conshfreq)
-	writeSound(choppedOut,choppedX, consFS)
+	#writeSound(choppedOut,choppedX, consFS)
 	writeSound(outFile, newX, consFS)
 
 

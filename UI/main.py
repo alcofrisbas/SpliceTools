@@ -166,7 +166,10 @@ class MainView:
 
 	def chooseFolder(self, var):
 		f = tkFileDialog.askdirectory(initialdir = ".")
-		self.settings[var] = f
+		#print(os.getcwd())
+		#print(f)
+		the_dir = f.split(os.getcwd())[-1][1:]
+		self.settings[var] = the_dir
 		self.mainSettings.setValues(self.settings)
 		#print var.get()
 
