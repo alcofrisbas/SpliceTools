@@ -15,10 +15,17 @@ Splice tools has a few dependencies, all pip installable:
 ```python
 pip install numpy scipy matplotlib pysoundfile
 ```
+
+## Running the UI
+
+```bash
+cd UI
+python main.py
+```
 ## An Example
 
 ```bash
-cd scripts
+cd UI/scripts
 python batchSplice.py
 ```
 
