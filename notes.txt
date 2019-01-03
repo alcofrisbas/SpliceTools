@@ -54,20 +54,28 @@ main.py creates the UI
 
 
 Here's the processing flowchart:
+In Terminal, type "python main.py"
+  Immediately imports settings that were stored in json
+  Prints these imported json settings
 
-"Process Batch" button triggers the spliceByBatch function inside main.py
-  Label changes from "Idle" to "Working"
-  Calls master.update_idletasks             ???
-  Calls "applyMainSettings" which reads settings
-    Prints settings
-  Calls "for g in self.graphs"              ???
-    Prints "self.graphGet(g)"               ???
-  Print self.setupOut["freqs"]              Sequential chromatic frequencies based on starting frequency entered in UI
-  Print len(self.setupOut["freqs"])         How many elements in each folder?
-  Loop for each element in Folder
-    Call "splice"                           Found in batchSplice.py     splice(i, setupOut, settings)
-      Computes upper and lower frequency bounds for fundamantal freq for this particular pitch
-      Call
+  "Process Batch" button triggers the spliceByBatch function inside main.py
+    spliceByBatch
+      Print "Begin spliceByBatch"
+      Label changes from "Idle" to "Working"
+      Calls master.update_idletasks             ???
+      Calls "applyMainSettings"
+        applyMainSettings
+          Reads settings (No need to have hit the "Apply" button previously)
+          Prints settings
+      Gets values from unused Pads and Crossfades graphs
+      Calls "for g in self.graphs"              ???
+        Prints "self.graphGet(g)"               ???
+      Print self.setupOut["freqs"]              Sequential chromatic frequencies based on starting frequency entered in UI
+      Print len(self.setupOut["freqs"])         How many elements in each folder?
+      Loop for each element in Folder
+        Call "splice"                           Found in batchSplice.py     splice(i, setupOut, settings)
+          Computes upper and lower frequency bounds for fundamantal freq for this particular pitch
+          Call
 
 
 

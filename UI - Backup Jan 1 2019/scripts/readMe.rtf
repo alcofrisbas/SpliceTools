@@ -1,0 +1,103 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww14540\viewh16200\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b\fs24 \cf0 \ul \ulc0 This readme is about running splicing scripts
+\b0 \ulnone \
+\
+In order to run the ui version of splicing, \
+open a terminal window and cd to ~/Desktop/gits/SpliceTools/UI\
+and run 'python main.py'\
+\
+there you can edit settings and splice files together\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+the main script is soundOps.py\
+\
+To set: Number of harmonics (freqSurveyDepth), Thresholds, and depth (how many frames in a row that need to be good), use:\
+config.py\
+\
+if you want to use and edit the scripts, \
+cd to ~/Desktop/gits/SpliceTools/UI/scripts\
+\
+to edit the pad and crossfade lengths, open 'batchSlice.py.'\
+in batchSlice.py, there are commented sections which tell you \
+where to edit.\
+\
+settings.json - Here you can edit parameters directly\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 Settings.py is just classes for main.py (I won't want to mess with this)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 Tray.py is just classes for main.py (I won't want to mess with this)\
+\
+models folder contains SMS Tools (utilFunctions_C, etc) and:\
+interpolators.py - so we don't have to do linear interpolation for lengthening/shortening audio fildes\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+
+\i to edit the main settings 
+\b in terminal
+\b0  (ugh), \
+stay in the same directory in the terminal and type:\
+./editsettings
+\i0 \
+
+\i a sublime window will open up and you can write in the settings you want\
+this is for settings like file names and other main settings.
+\i0 \
+\
+If we want to change the bounds (from 4000) for the sliders, go to graphicKnobs.py, or these can be overrid in main.py\
+\
+------------------------------------------------------------\
+\
+main.py\
+	"Batch Process" >> line 108 go.button, which calls self.splicByBatch (self means it's inside the same class),\
+	which is at line 185\
+	The loop for doing all 27 audio files is in this spliceByBatch function\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 	At line 199, spliceByBatch calls splice, which is in batchSplice.\
+\
+	SetUp (in batchSplice) got called when readSettings was called in main.py.  This is just preliminary stuff.\
+\
+------------------------------------------------------------\
+\
+We could run this directly with batchSplice.  It will even do all 27 files. (Note i in range[27] in "if __name-- == '__main--'")\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 Parameters would come from json file\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+
+\b \ul Python Shortcuts:
+\b0 \ulnone \
+\
+to run the the same(or any previous) command, use the up arrow. \
+this will fill the line with previous command.\
+\
+to abort any process, type Ctrl+c\
+ctrl+d gives an EOF command and will also exit processes. \
+	it will close the terminal if you are not doing anythin\
+new terminal window: command+n\
+\
+cd ..   goes back one level\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 \ul \ulc0 Sublime Shortcuts:
+\b0 \ulnone \
+\
+To get sidebar, open a folder instead of a file}

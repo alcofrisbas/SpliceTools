@@ -141,7 +141,7 @@ def stablePoint(hfreqArray, hmagArray, FreqThreshold,  MagThreshold, surveyDepth
 	"""
 	surveyLen = hfreqArray.shape[0]				#duration of sound for for loop
 
-	print surveyDepth
+	print "From stablePoint ::: surveyDepth = ", surveyDepth
 	values = []
 	for h in range(surveyDepth):
 		for i in range(surveyLen-1):
@@ -167,7 +167,7 @@ def stablePoint(hfreqArray, hmagArray, FreqThreshold,  MagThreshold, surveyDepth
 	 			values.append(i)
 	 			break
 
-	print values, i
+	print "From stablePoint ::: values, i = ", values, i
 
 
 
@@ -404,12 +404,12 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 	cfLF = cfL/samplesPerFrame(consX, conshfreq)		#cfL in Frames(vs samples)
 	#hfreqArray, hmagArray, FreqThreshold,  MagThreshold, surveyDepth, windowLength, verbose
 	stable = stablePoint(conshfreq, conshmag, c.freqThreshold,  c.magThreshold, c.freqSurveyDepth, c.freqStabilityValue, True)+ pad
-	print "stable:",stable
-	print "conshfreq.shape",conshfreq.shape[0]
-	if stable >= conshfreq.shape[0]:				#This is only sp Python doesn't freak when the end of the file is reached
+	print "Result from stablePoint ::: stable = ",stable
+	print "conshfreq.shape = ",conshfreq.shape[0]
+	if stable >= conshfreq.shape[0]:				#This is only so Python doesn't freak when the end of the file is reached
 		stable = conshfreq.shape[0]-1
 
-	print "new stable:",stable
+	print "new stable = ",stable
 	'''stable = max(freqStable, magStable)					#take the maximum for stable point
 				if stable == conshfreq.shape[0]+pad:				#However, the highest never detects one
 					print "None found in Frequency"
@@ -433,13 +433,13 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 	#consFreqF0 = infoAt(conshfreq, stable)				#find the f0 frequency of the consonant at the stable point
 	#vowelFreqF0 = infoAt(vowelhfreq, 1.0*framesPerSecond(vowelFS, samplesPerFrame(vowelX, vowelhfreq)))
 	consFreqF0 = averageFreq(conshfreq)
-	print "original consontant Frequency:",consFreqF0
+	print "Original consontant Frequency = ",consFreqF0
 
 	vowelFreqF0 = averageFreq(vowelhfreq)
-	print "original vowel Frequency:",vowelFreqF0	#find the f0 frequency of the vowel at the stable point
+	print "Original vowel Frequency = ",vowelFreqF0	#find the f0 frequency of the vowel at the stable point
 	pR = pitchRatio(consFreqF0, vowelFreqF0)			#find the pitch ration between the frequencies
 	initialNumFrames = numFrames(conshfreq)				#number of frames in the consonant sound
-	print pR
+	print "Pitch Ratio consFreqF0 / vowelFreqF0 = ",pR
 	#if pR != 1:								#stretch or shrink the consonant as necessary
 	consX = retune(consFS, consX, 1/pR)			#to match its pitch to the vowel's
 	#writeSound(outFile[:-4]+".cons0.wav", consX, consFS)
@@ -448,10 +448,10 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 	afterRetuneNumFrames = numFrames(conshfreq)			#the duration in Frames of the consonant after the stretch
 	consFreqF0 = averageFreq(conshfreq)
 	pr2 = pitchRatio(consFreqF0,vowelFreqF0)
-	print "new pR:",pr2
+	print "New pR:",pr2
 	stable = int(stable*(float(afterRetuneNumFrames)/initialNumFrames))#calculate where the stable frame is after the retune
 	consFreqF0 = averageFreq(conshfreq)				#find the new frequency at the new stable point
-	print "new conss Freq:",consFreqF0
+	print "New consFreqF0:",consFreqF0
 	padAmount = splicePointMs - (stable*samplesPerFrame(consX, conshfreq)/consFS)*1000
 	#print "padamount",padAmount
 														#set pad amount to line up the consonant \/ \/ \/ \/
@@ -473,7 +473,7 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 	consFreqF0 = averageFreq(conshfreq) #infoAt(conshfreq, 1.0*framesPerSecond(consFS, samplesPerFrame(consX, conshfreq)))
 														#f0 of consonant
 	vowelFreqF0 = averageFreq(vowelhfreq)
-	print "consonant postshifting:",consFreqF0
+	print "consFreqF0 postshifting:",consFreqF0
 	print "Vowel Frequency:",vowelFreqF0
 	print "========================="
 	newX = simpleXFade(consX, vowelX, consFS, stable, cfL, conshfreq)
@@ -482,7 +482,6 @@ def splice(consFile, vowelFile, cfL, pad, vowelPadMs, splicePointMs, f0min, f0ma
 	choppedX = simpleXFade(consX, blankX, consFS, stable, cfL, conshfreq)
 	#writeSound(choppedOut,choppedX, consFS)
 	writeSound(outFile, newX, consFS)
-
 
 def main():
 	c = config.Config()
